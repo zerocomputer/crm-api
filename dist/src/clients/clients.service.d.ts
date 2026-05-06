@@ -1,8 +1,10 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { ActivitiesService } from '../activities/activities.service';
 import { CreateClientDto, UpdateClientDto } from './dto';
 export declare class ClientsService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private activities;
+    constructor(prisma: PrismaService, activities: ActivitiesService);
     findAll(query: {
         status?: string;
         search?: string;
@@ -10,8 +12,13 @@ export declare class ClientsService {
         limit?: number;
     }): Promise<{
         data: ({
+            company: {
+                name: string;
+                id: string;
+            } | null;
             _count: {
                 tasks: number;
+                deals: number;
             };
             assignedUser: {
                 name: string | null;
@@ -24,7 +31,7 @@ export declare class ClientsService {
             createdAt: Date;
             updatedAt: Date;
             phone: string | null;
-            company: string | null;
+            companyId: string | null;
             status: string;
             source: string | null;
             description: string | null;
@@ -36,6 +43,10 @@ export declare class ClientsService {
         totalPages: number;
     }>;
     findOne(id: string): Promise<{
+        company: {
+            name: string;
+            id: string;
+        } | null;
         tasks: ({
             assignee: {
                 name: string | null;
@@ -45,13 +56,48 @@ export declare class ClientsService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            clientId: string | null;
+            dealId: string | null;
             status: string;
             description: string | null;
             title: string;
             priority: string;
             dueDate: Date | null;
-            clientId: string | null;
             assigneeId: string | null;
+        })[];
+        deals: ({
+            owner: {
+                name: string | null;
+                id: string;
+            } | null;
+        } & {
+            id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            clientId: string | null;
+            companyId: string | null;
+            description: string | null;
+            ownerId: string | null;
+            title: string;
+            amount: number | null;
+            stage: string;
+            probability: number;
+            closedAt: Date | null;
+        })[];
+        activities: ({
+            user: {
+                name: string | null;
+                id: string;
+            } | null;
+        } & {
+            id: string;
+            createdAt: Date;
+            type: string;
+            content: string;
+            metadata: import("@prisma/client/runtime/client").JsonValue | null;
+            clientId: string | null;
+            dealId: string | null;
+            userId: string | null;
         })[];
         assignedUser: {
             email: string;
@@ -65,7 +111,7 @@ export declare class ClientsService {
         createdAt: Date;
         updatedAt: Date;
         phone: string | null;
-        company: string | null;
+        companyId: string | null;
         status: string;
         source: string | null;
         description: string | null;
@@ -78,7 +124,7 @@ export declare class ClientsService {
         createdAt: Date;
         updatedAt: Date;
         phone: string | null;
-        company: string | null;
+        companyId: string | null;
         status: string;
         source: string | null;
         description: string | null;
@@ -91,7 +137,7 @@ export declare class ClientsService {
         createdAt: Date;
         updatedAt: Date;
         phone: string | null;
-        company: string | null;
+        companyId: string | null;
         status: string;
         source: string | null;
         description: string | null;

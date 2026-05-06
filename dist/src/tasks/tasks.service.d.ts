@@ -23,12 +23,13 @@ export declare class TasksService {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            clientId: string | null;
+            dealId: string | null;
             status: string;
             description: string | null;
             title: string;
             priority: string;
             dueDate: Date | null;
-            clientId: string | null;
             assigneeId: string | null;
         })[];
         total: number;
@@ -50,12 +51,13 @@ export declare class TasksService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string | null;
+        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
         priority: string;
         dueDate: Date | null;
-        clientId: string | null;
         assigneeId: string | null;
     }>;
     create(dto: CreateTaskDto, userId: string): Promise<{
@@ -71,12 +73,13 @@ export declare class TasksService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string | null;
+        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
         priority: string;
         dueDate: Date | null;
-        clientId: string | null;
         assigneeId: string | null;
     }>;
     update(id: string, dto: UpdateTaskDto): Promise<{
@@ -92,12 +95,13 @@ export declare class TasksService {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string | null;
+        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
         priority: string;
         dueDate: Date | null;
-        clientId: string | null;
         assigneeId: string | null;
     }>;
     remove(id: string): Promise<{

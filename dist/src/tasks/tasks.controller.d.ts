@@ -17,12 +17,13 @@ export declare class TasksController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            clientId: string | null;
+            dealId: string | null;
             status: string;
             description: string | null;
             title: string;
             priority: string;
             dueDate: Date | null;
-            clientId: string | null;
             assigneeId: string | null;
         })[];
         total: number;
@@ -44,12 +45,13 @@ export declare class TasksController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string | null;
+        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
         priority: string;
         dueDate: Date | null;
-        clientId: string | null;
         assigneeId: string | null;
     }>;
     create(dto: CreateTaskDto, req: any): Promise<{
@@ -65,12 +67,13 @@ export declare class TasksController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string | null;
+        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
         priority: string;
         dueDate: Date | null;
-        clientId: string | null;
         assigneeId: string | null;
     }>;
     update(id: string, dto: UpdateTaskDto): Promise<{
@@ -86,12 +89,13 @@ export declare class TasksController {
         id: string;
         createdAt: Date;
         updatedAt: Date;
+        clientId: string | null;
+        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
         priority: string;
         dueDate: Date | null;
-        clientId: string | null;
         assigneeId: string | null;
     }>;
     remove(id: string): Promise<{

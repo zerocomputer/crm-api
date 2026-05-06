@@ -1,15 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ActivitiesService } from '../activities/activities.service';
 import { CreateClientDto, UpdateClientDto } from './dto';
 
 @Injectable()
 export class ClientsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private activities: ActivitiesService,
+  ) {}
 
   async findAll(query: { status?: string; search?: string; page?: number; limit?: number }) {
     const { status, search, page = 1, limit = 20 } = query;
     const where: any = {};
-
     if (status) where.status = status;
     if (search) {
       where.OR = [
@@ -18,18 +21,18 @@ export class ClientsService {
         { company: { contains: search, mode: 'insensitive' } },
       ];
     }
-
     const [data, total] = await Promise.all([
       this.prisma.client.findMany({
-        where,
-        skip: (page - 1) * limit,
-        take: limit,
+        where, skip: (page - 1) * limit, take: limit,
         orderBy: { createdAt: 'desc' },
-        include: { assignedUser: { select: { id: true, name: true } }, _count: { select: { tasks: true } } },
+        include: {
+          assignedUser: { select: { id: true, name: true } },
+          company: { select: { id: true, name: true } },
+          _count: { select: { tasks: true, deals: true } },
+        },
       }),
       this.prisma.client.count({ where }),
     ]);
-
     return { data, total, page, limit, totalPages: Math.ceil(total / limit) };
   }
 
@@ -38,10 +41,10 @@ export class ClientsService {
       where: { id },
       include: {
         assignedUser: { select: { id: true, name: true, email: true } },
-        tasks: {
-          orderBy: { createdAt: 'desc' },
-          include: { assignee: { select: { id: true, name: true } } },
-        },
+        company: { select: { id: true, name: true } },
+        tasks: { orderBy: { createdAt: 'desc' }, take: 10, include: { assignee: { select: { id: true, name: true } } } },
+        deals: { orderBy: { createdAt: 'desc' }, take: 10, include: { owner: { select: { id: true, name: true } } } },
+        activities: { orderBy: { createdAt: 'desc' }, take: 20, include: { user: { select: { id: true, name: true } } } },
       },
     });
     if (!client) throw new NotFoundException('Client not found');
@@ -49,14 +52,17 @@ export class ClientsService {
   }
 
   async create(dto: CreateClientDto, userId: string) {
-    return this.prisma.client.create({
+    const client = await this.prisma.client.create({
       data: { ...dto, assignedTo: userId },
     });
+    await this.activities.create({ type: 'note', content: 'Клиент создан', clientId: client.id, userId });
+    return client;
   }
 
   async update(id: string, dto: UpdateClientDto) {
     await this.findOne(id);
-    return this.prisma.client.update({ where: { id }, data: dto });
+    const client = await this.prisma.client.update({ where: { id }, data: dto });
+    return client;
   }
 
   async remove(id: string) {

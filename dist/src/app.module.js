@@ -15,6 +15,9 @@ const users_module_1 = require("./users/users.module");
 const clients_module_1 = require("./clients/clients.module");
 const tasks_module_1 = require("./tasks/tasks.module");
 const dashboard_module_1 = require("./dashboard/dashboard.module");
+const deals_module_1 = require("./deals/deals.module");
+const companies_module_1 = require("./companies/companies.module");
+const activities_module_1 = require("./activities/activities.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -22,12 +25,9 @@ exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
             config_1.ConfigModule.forRoot({ isGlobal: true }),
-            prisma_module_1.PrismaModule,
-            auth_module_1.AuthModule,
-            users_module_1.UsersModule,
-            clients_module_1.ClientsModule,
-            tasks_module_1.TasksModule,
-            dashboard_module_1.DashboardModule,
+            prisma_module_1.PrismaModule, auth_module_1.AuthModule, users_module_1.UsersModule,
+            clients_module_1.ClientsModule, tasks_module_1.TasksModule, dashboard_module_1.DashboardModule,
+            deals_module_1.DealsModule, companies_module_1.CompaniesModule, activities_module_1.ActivitiesModule,
         ],
     })
 ], AppModule);

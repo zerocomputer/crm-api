@@ -4,27 +4,21 @@ export class CreateClientDto {
   @IsString()
   name: string;
 
-  @IsOptional()
-  @IsEmail()
+  @IsOptional() @IsEmail()
   email?: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
   phone?: string;
 
-  @IsOptional()
-  @IsString()
-  company?: string;
+  @IsOptional() @IsString()
+  companyId?: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
   status?: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
   source?: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
   description?: string;
 }

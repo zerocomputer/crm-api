@@ -27,7 +27,7 @@ export declare class DashboardController {
             createdAt: Date;
             updatedAt: Date;
             phone: string | null;
-            company: string | null;
+            companyId: string | null;
             status: string;
             source: string | null;
             description: string | null;
@@ -42,12 +42,13 @@ export declare class DashboardController {
             id: string;
             createdAt: Date;
             updatedAt: Date;
+            clientId: string | null;
+            dealId: string | null;
             status: string;
             description: string | null;
             title: string;
             priority: string;
             dueDate: Date | null;
-            clientId: string | null;
             assigneeId: string | null;
         })[];
     }>;
