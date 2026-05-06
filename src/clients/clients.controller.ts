@@ -17,10 +17,6 @@ export class ClientsController {
   @Post()
   create(@Body() dto: CreateClientDto, @Req() req: any) { return this.service.create(dto, req.user.id); }
 
-  @Post('import')
-  importClients(@Body() body: { clients: CreateClientDto[] }, @Req() req: any) {
-    return this.service.bulkCreate(body.clients, req.user.id);
-  }
 
   @Post(':id/convert')
   convertLead(@Param('id') id: string, @Req() req: any) { return this.service.convertLead(id, req.user.id); }

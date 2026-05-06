@@ -58,12 +58,6 @@ export class ClientsService {
     return client;
   }
 
-  async bulkCreate(clients: CreateClientDto[], userId: string) {
-    const created = await this.prisma.client.createMany({
-      data: clients.map((c) => ({ ...c, assignedTo: userId })),
-    });
-    return { created: created.count };
-  }
 
   async update(id: string, dto: UpdateClientDto) {
     await this.findOne(id);
