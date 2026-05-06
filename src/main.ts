@@ -8,18 +8,18 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    origin: true,
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
   app.setGlobalPrefix('api');
   app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
-
-  // Serve uploaded files
   app.useStaticAssets(join(__dirname, '..', 'uploads'), { prefix: '/uploads' });
 
   const port = process.env.PORT || 3001;
-  await app.listen(port);
-  console.log(`CRM API running on http://localhost:${port}`);
+  await app.listen(port, '0.0.0.0');
+  console.log(`CRM API running on http://0.0.0.0:${port}`);
 }
 bootstrap();
