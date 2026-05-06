@@ -9,6 +9,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { DealsModule } from './deals/deals.module';
 import { CompaniesModule } from './companies/companies.module';
 import { ActivitiesModule } from './activities/activities.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ActivitiesModule } from './activities/activities.module';
     PrismaModule, AuthModule, UsersModule,
     ClientsModule, TasksModule, DashboardModule,
     DealsModule, CompaniesModule, ActivitiesModule,
+    UploadModule,
   ],
 })
 export class AppModule {}

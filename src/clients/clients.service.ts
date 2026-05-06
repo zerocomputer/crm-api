@@ -18,7 +18,6 @@ export class ClientsService {
       where.OR = [
         { name: { contains: search, mode: 'insensitive' } },
         { email: { contains: search, mode: 'insensitive' } },
-        { company: { contains: search, mode: 'insensitive' } },
       ];
     }
     const [data, total] = await Promise.all([
@@ -59,15 +58,31 @@ export class ClientsService {
     return client;
   }
 
+  async bulkCreate(clients: CreateClientDto[], userId: string) {
+    const created = await this.prisma.client.createMany({
+      data: clients.map((c) => ({ ...c, assignedTo: userId })),
+    });
+    return { created: created.count };
+  }
+
   async update(id: string, dto: UpdateClientDto) {
     await this.findOne(id);
-    const client = await this.prisma.client.update({ where: { id }, data: dto });
-    return client;
+    return this.prisma.client.update({ where: { id }, data: dto });
   }
 
   async remove(id: string) {
     await this.findOne(id);
     await this.prisma.client.delete({ where: { id } });
     return { deleted: true };
+  }
+
+  async convertLead(id: string, userId: string) {
+    const client = await this.findOne(id);
+    if (client.status !== 'lead') throw new NotFoundException('Client is not a lead');
+    const updated = await this.prisma.client.update({ where: { id }, data: { status: 'active' } });
+    await this.activities.create({ type: 'status_change', content: 'Лид конвертирован в клиента', clientId: id, userId });
+    // Auto-create a deal
+    await this.prisma.deal.create({ data: { title: `Сделка: ${client.name}`, stage: 'lead', clientId: id, ownerId: userId } });
+    return updated;
   }
 }

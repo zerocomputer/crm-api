@@ -17,38 +17,38 @@ export declare class DashboardController {
     getRecent(): Promise<{
         recentClients: ({
             assignedUser: {
-                name: string | null;
                 id: string;
+                name: string | null;
             } | null;
         } & {
+            id: string;
             email: string | null;
             name: string;
-            id: string;
             createdAt: Date;
             updatedAt: Date;
             phone: string | null;
-            companyId: string | null;
             status: string;
             source: string | null;
             description: string | null;
+            companyId: string | null;
             assignedTo: string | null;
         })[];
         recentTasks: ({
             client: {
-                name: string;
                 id: string;
+                name: string;
             } | null;
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            clientId: string | null;
-            dealId: string | null;
             status: string;
             description: string | null;
             title: string;
+            clientId: string | null;
             priority: string;
             dueDate: Date | null;
+            dealId: string | null;
             assigneeId: string | null;
         })[];
     }>;

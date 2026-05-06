@@ -12,24 +12,24 @@ export declare class TasksService {
     }): Promise<{
         data: ({
             client: {
-                name: string;
                 id: string;
+                name: string;
             } | null;
             assignee: {
-                name: string | null;
                 id: string;
+                name: string | null;
             } | null;
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            clientId: string | null;
-            dealId: string | null;
             status: string;
             description: string | null;
             title: string;
+            clientId: string | null;
             priority: string;
             dueDate: Date | null;
+            dealId: string | null;
             assigneeId: string | null;
         })[];
         total: number;
@@ -39,69 +39,69 @@ export declare class TasksService {
     }>;
     findOne(id: string): Promise<{
         client: {
-            name: string;
             id: string;
+            name: string;
         } | null;
         assignee: {
+            id: string;
             email: string;
             name: string | null;
-            id: string;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        clientId: string | null;
-        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
+        clientId: string | null;
         priority: string;
         dueDate: Date | null;
+        dealId: string | null;
         assigneeId: string | null;
     }>;
     create(dto: CreateTaskDto, userId: string): Promise<{
         client: {
-            name: string;
             id: string;
+            name: string;
         } | null;
         assignee: {
-            name: string | null;
             id: string;
+            name: string | null;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        clientId: string | null;
-        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
+        clientId: string | null;
         priority: string;
         dueDate: Date | null;
+        dealId: string | null;
         assigneeId: string | null;
     }>;
     update(id: string, dto: UpdateTaskDto): Promise<{
         client: {
-            name: string;
             id: string;
+            name: string;
         } | null;
         assignee: {
-            name: string | null;
             id: string;
+            name: string | null;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        clientId: string | null;
-        dealId: string | null;
         status: string;
         description: string | null;
         title: string;
+        clientId: string | null;
         priority: string;
         dueDate: Date | null;
+        dealId: string | null;
         assigneeId: string | null;
     }>;
     remove(id: string): Promise<{

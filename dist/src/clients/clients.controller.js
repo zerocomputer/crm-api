@@ -21,21 +21,15 @@ let ClientsController = class ClientsController {
     constructor(service) {
         this.service = service;
     }
-    findAll(query) {
-        return this.service.findAll(query);
+    findAll(query) { return this.service.findAll(query); }
+    findOne(id) { return this.service.findOne(id); }
+    create(dto, req) { return this.service.create(dto, req.user.id); }
+    importClients(body, req) {
+        return this.service.bulkCreate(body.clients, req.user.id);
     }
-    findOne(id) {
-        return this.service.findOne(id);
-    }
-    create(dto, req) {
-        return this.service.create(dto, req.user.id);
-    }
-    update(id, dto) {
-        return this.service.update(id, dto);
-    }
-    remove(id) {
-        return this.service.remove(id);
-    }
+    convertLead(id, req) { return this.service.convertLead(id, req.user.id); }
+    update(id, dto) { return this.service.update(id, dto); }
+    remove(id) { return this.service.remove(id); }
 };
 exports.ClientsController = ClientsController;
 __decorate([
@@ -60,6 +54,22 @@ __decorate([
     __metadata("design:paramtypes", [dto_1.CreateClientDto, Object]),
     __metadata("design:returntype", void 0)
 ], ClientsController.prototype, "create", null);
+__decorate([
+    (0, common_1.Post)('import'),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", void 0)
+], ClientsController.prototype, "importClients", null);
+__decorate([
+    (0, common_1.Post)(':id/convert'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], ClientsController.prototype, "convertLead", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     __param(0, (0, common_1.Param)('id')),

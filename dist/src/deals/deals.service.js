@@ -12,9 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DealsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
+const activities_service_1 = require("../activities/activities.service");
 let DealsService = class DealsService {
-    constructor(prisma) {
+    constructor(prisma, activities) {
         this.prisma = prisma;
+        this.activities = activities;
     }
     async findAll(query) {
         const { stage, clientId, page = 1 } = query;
@@ -25,15 +27,9 @@ let DealsService = class DealsService {
             where.clientId = clientId;
         const [data, total] = await Promise.all([
             this.prisma.deal.findMany({
-                where,
-                skip: (page - 1) * 20,
-                take: 20,
+                where, skip: (page - 1) * 20, take: 20,
                 orderBy: { createdAt: 'desc' },
-                include: {
-                    client: { select: { id: true, name: true } },
-                    company: { select: { id: true, name: true } },
-                    owner: { select: { id: true, name: true } },
-                },
+                include: { client: { select: { id: true, name: true } }, company: { select: { id: true, name: true } }, owner: { select: { id: true, name: true } } },
             }),
             this.prisma.deal.count({ where }),
         ]);
@@ -46,7 +42,7 @@ let DealsService = class DealsService {
                 client: { select: { id: true, name: true, email: true } },
                 company: { select: { id: true, name: true } },
                 owner: { select: { id: true, name: true } },
-                activities: { orderBy: { createdAt: 'desc' }, take: 10 },
+                activities: { orderBy: { createdAt: 'desc' }, take: 20, include: { user: { select: { id: true, name: true } } } },
             },
         });
         if (!deal)
@@ -54,13 +50,22 @@ let DealsService = class DealsService {
         return deal;
     }
     async create(dto, userId) {
-        return this.prisma.deal.create({
+        const deal = await this.prisma.deal.create({
             data: { ...dto, ownerId: userId },
             include: { client: { select: { id: true, name: true } } },
         });
+        await this.activities.create({ type: 'deal_stage', content: `Создана сделка: ${dto.title}`, dealId: deal.id, userId, metadata: { stage: dto.stage } });
+        return deal;
     }
-    async update(id, dto) {
-        await this.findOne(id);
+    async update(id, dto, userId) {
+        const old = await this.findOne(id);
+        if (dto.stage && dto.stage !== old.stage) {
+            await this.activities.create({
+                type: 'deal_stage',
+                content: `Сделка перешла из "${old.stage}" в "${dto.stage}"`,
+                dealId: id, userId: userId || old.ownerId || '',
+            });
+        }
         return this.prisma.deal.update({
             where: { id },
             data: { ...dto, closedAt: dto.closedAt ? new Date(dto.closedAt) : undefined },
@@ -76,11 +81,7 @@ let DealsService = class DealsService {
         const stages = ['lead', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
         const stats = await Promise.all(stages.map(async (stage) => {
             const data = await this.prisma.deal.findMany({ where: { stage }, select: { amount: true } });
-            return {
-                stage,
-                count: data.length,
-                totalAmount: data.reduce((s, d) => s + (d.amount || 0), 0),
-            };
+            return { stage, count: data.length, totalAmount: data.reduce((s, d) => s + (d.amount || 0), 0) };
         }));
         return stats;
     }
@@ -88,6 +89,7 @@ let DealsService = class DealsService {
 exports.DealsService = DealsService;
 exports.DealsService = DealsService = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        activities_service_1.ActivitiesService])
 ], DealsService);
 //# sourceMappingURL=deals.service.js.map

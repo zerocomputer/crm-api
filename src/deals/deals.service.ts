@@ -1,28 +1,25 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { ActivitiesService } from '../activities/activities.service';
 import { CreateDealDto, UpdateDealDto } from './dto';
 
 @Injectable()
 export class DealsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private activities: ActivitiesService,
+  ) {}
 
   async findAll(query: { stage?: string; clientId?: string; page?: number }) {
     const { stage, clientId, page = 1 } = query;
     const where: any = {};
     if (stage) where.stage = stage;
     if (clientId) where.clientId = clientId;
-
     const [data, total] = await Promise.all([
       this.prisma.deal.findMany({
-        where,
-        skip: (page - 1) * 20,
-        take: 20,
+        where, skip: (page - 1) * 20, take: 20,
         orderBy: { createdAt: 'desc' },
-        include: {
-          client: { select: { id: true, name: true } },
-          company: { select: { id: true, name: true } },
-          owner: { select: { id: true, name: true } },
-        },
+        include: { client: { select: { id: true, name: true } }, company: { select: { id: true, name: true } }, owner: { select: { id: true, name: true } } },
       }),
       this.prisma.deal.count({ where }),
     ]);
@@ -36,7 +33,7 @@ export class DealsService {
         client: { select: { id: true, name: true, email: true } },
         company: { select: { id: true, name: true } },
         owner: { select: { id: true, name: true } },
-        activities: { orderBy: { createdAt: 'desc' }, take: 10 },
+        activities: { orderBy: { createdAt: 'desc' }, take: 20, include: { user: { select: { id: true, name: true } } } },
       },
     });
     if (!deal) throw new NotFoundException('Deal not found');
@@ -44,14 +41,23 @@ export class DealsService {
   }
 
   async create(dto: CreateDealDto, userId: string) {
-    return this.prisma.deal.create({
+    const deal = await this.prisma.deal.create({
       data: { ...dto, ownerId: userId },
       include: { client: { select: { id: true, name: true } } },
     });
+    await this.activities.create({ type: 'deal_stage', content: `Создана сделка: ${dto.title}`, dealId: deal.id, userId, metadata: { stage: dto.stage } });
+    return deal;
   }
 
-  async update(id: string, dto: UpdateDealDto) {
-    await this.findOne(id);
+  async update(id: string, dto: UpdateDealDto, userId?: string) {
+    const old = await this.findOne(id);
+    if (dto.stage && dto.stage !== old.stage) {
+      await this.activities.create({
+        type: 'deal_stage',
+        content: `Сделка перешла из "${old.stage}" в "${dto.stage}"`,
+        dealId: id, userId: userId || old.ownerId || '',
+      });
+    }
     return this.prisma.deal.update({
       where: { id },
       data: { ...dto, closedAt: dto.closedAt ? new Date(dto.closedAt) : undefined },
@@ -70,11 +76,7 @@ export class DealsService {
     const stats = await Promise.all(
       stages.map(async (stage) => {
         const data = await this.prisma.deal.findMany({ where: { stage }, select: { amount: true } });
-        return {
-          stage,
-          count: data.length,
-          totalAmount: data.reduce((s, d) => s + (d.amount || 0), 0),
-        };
+        return { stage, count: data.length, totalAmount: data.reduce((s, d) => s + (d.amount || 0), 0) };
       })
     );
     return stats;

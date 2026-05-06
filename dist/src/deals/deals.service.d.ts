@@ -1,8 +1,10 @@
 import { PrismaService } from '../prisma/prisma.service';
+import { ActivitiesService } from '../activities/activities.service';
 import { CreateDealDto, UpdateDealDto } from './dto';
 export declare class DealsService {
     private prisma;
-    constructor(prisma: PrismaService);
+    private activities;
+    constructor(prisma: PrismaService, activities: ActivitiesService);
     findAll(query: {
         stage?: string;
         clientId?: string;
@@ -10,109 +12,114 @@ export declare class DealsService {
     }): Promise<{
         data: ({
             company: {
-                name: string;
                 id: string;
+                name: string;
             } | null;
             client: {
-                name: string;
                 id: string;
+                name: string;
             } | null;
             owner: {
-                name: string | null;
                 id: string;
+                name: string | null;
             } | null;
         } & {
             id: string;
             createdAt: Date;
             updatedAt: Date;
-            clientId: string | null;
-            companyId: string | null;
             description: string | null;
-            ownerId: string | null;
+            companyId: string | null;
             title: string;
             amount: number | null;
             stage: string;
             probability: number;
             closedAt: Date | null;
+            clientId: string | null;
+            ownerId: string | null;
         })[];
         total: number;
         page: number;
     }>;
     findOne(id: string): Promise<{
-        company: {
-            name: string;
-            id: string;
-        } | null;
-        client: {
-            email: string | null;
-            name: string;
-            id: string;
-        } | null;
-        activities: {
+        activities: ({
+            user: {
+                id: string;
+                name: string | null;
+            } | null;
+        } & {
             id: string;
             createdAt: Date;
+            clientId: string | null;
+            dealId: string | null;
             type: string;
             content: string;
             metadata: import("@prisma/client/runtime/client").JsonValue | null;
-            clientId: string | null;
-            dealId: string | null;
             userId: string | null;
-        }[];
-        owner: {
-            name: string | null;
+        })[];
+        company: {
             id: string;
+            name: string;
+        } | null;
+        client: {
+            id: string;
+            email: string | null;
+            name: string;
+        } | null;
+        owner: {
+            id: string;
+            name: string | null;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        clientId: string | null;
-        companyId: string | null;
         description: string | null;
-        ownerId: string | null;
+        companyId: string | null;
         title: string;
         amount: number | null;
         stage: string;
         probability: number;
         closedAt: Date | null;
+        clientId: string | null;
+        ownerId: string | null;
     }>;
     create(dto: CreateDealDto, userId: string): Promise<{
         client: {
-            name: string;
             id: string;
+            name: string;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        clientId: string | null;
-        companyId: string | null;
         description: string | null;
-        ownerId: string | null;
+        companyId: string | null;
         title: string;
         amount: number | null;
         stage: string;
         probability: number;
         closedAt: Date | null;
+        clientId: string | null;
+        ownerId: string | null;
     }>;
-    update(id: string, dto: UpdateDealDto): Promise<{
+    update(id: string, dto: UpdateDealDto, userId?: string): Promise<{
         client: {
-            name: string;
             id: string;
+            name: string;
         } | null;
     } & {
         id: string;
         createdAt: Date;
         updatedAt: Date;
-        clientId: string | null;
-        companyId: string | null;
         description: string | null;
-        ownerId: string | null;
+        companyId: string | null;
         title: string;
         amount: number | null;
         stage: string;
         probability: number;
         closedAt: Date | null;
+        clientId: string | null;
+        ownerId: string | null;
     }>;
     remove(id: string): Promise<{
         deleted: boolean;

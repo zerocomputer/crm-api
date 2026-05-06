@@ -21,15 +21,11 @@ let DealsController = class DealsController {
     constructor(service) {
         this.service = service;
     }
-    findAll(query) { return this.service.findAll(query); }
+    findAll(q) { return this.service.findAll(q); }
     getPipeline() { return this.service.getPipelineStats(); }
     findOne(id) { return this.service.findOne(id); }
-    create(dto, req) {
-        return this.service.create(dto, req.user.id);
-    }
-    update(id, dto) {
-        return this.service.update(id, dto);
-    }
+    create(dto, req) { return this.service.create(dto, req.user.id); }
+    update(dto, id, req) { return this.service.update(id, dto, req.user.id); }
     remove(id) { return this.service.remove(id); }
 };
 exports.DealsController = DealsController;
@@ -63,10 +59,11 @@ __decorate([
 ], DealsController.prototype, "create", null);
 __decorate([
     (0, common_1.Patch)(':id'),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Param)('id')),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, dto_1.UpdateDealDto]),
+    __metadata("design:paramtypes", [dto_1.UpdateDealDto, String, Object]),
     __metadata("design:returntype", void 0)
 ], DealsController.prototype, "update", null);
 __decorate([

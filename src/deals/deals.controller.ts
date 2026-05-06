@@ -8,25 +8,10 @@ import { JwtAuthGuard } from '../auth/jwt.guard';
 export class DealsController {
   constructor(private service: DealsService) {}
 
-  @Get()
-  findAll(@Query() query: any) { return this.service.findAll(query); }
-
-  @Get('pipeline')
-  getPipeline() { return this.service.getPipelineStats(); }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) { return this.service.findOne(id); }
-
-  @Post()
-  create(@Body() dto: CreateDealDto, @Req() req: any) {
-    return this.service.create(dto, req.user.id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateDealDto) {
-    return this.service.update(id, dto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) { return this.service.remove(id); }
+  @Get() findAll(@Query() q: any) { return this.service.findAll(q); }
+  @Get('pipeline') getPipeline() { return this.service.getPipelineStats(); }
+  @Get(':id') findOne(@Param('id') id: string) { return this.service.findOne(id); }
+  @Post() create(@Body() dto: CreateDealDto, @Req() req: any) { return this.service.create(dto, req.user.id); }
+  @Patch(':id') update(@Body() dto: UpdateDealDto, @Param('id') id: string, @Req() req: any) { return this.service.update(id, dto, req.user.id); }
+  @Delete(':id') remove(@Param('id') id: string) { return this.service.remove(id); }
 }

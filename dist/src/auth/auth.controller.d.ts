@@ -16,9 +16,9 @@ export declare class AuthController {
         refreshToken: string;
     }>;
     me(req: any): Promise<{
+        id: string;
         email: string;
         name: string | null;
-        id: string;
         role: string;
         avatarUrl: string | null;
         createdAt: Date;

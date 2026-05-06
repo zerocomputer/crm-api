@@ -20,9 +20,9 @@ export declare class AuthService {
         refreshToken: string;
     }>;
     getProfile(userId: string): Promise<{
+        id: string;
         email: string;
         name: string | null;
-        id: string;
         role: string;
         avatarUrl: string | null;
         createdAt: Date;
